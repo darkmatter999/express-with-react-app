@@ -8,10 +8,13 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      users: []
+      users: [],
+      animals: [],
     }
 
     this.displayUsers = this.displayUsers.bind(this);
+    this.displayAnimals = this.displayAnimals.bind(this);
+    this.addAnimal = this.addAnimal.bind(this)
   }
 
   /* *********PREVIOUS SETUP*******************
@@ -40,12 +43,29 @@ class App extends React.Component {
       this.setState({users: users})
     })
   }
+
+  displayAnimals() {
+    Backend.displayAnimals().then(animals => {
+      this.setState({animals: animals})
+      //console.log(this.state.animals)
+    })
+  }
+
+  addAnimal() {
+    
+    Backend.addAnimal().then(animals => {
+      this.setState({animals: animals})
+    
+      console.log(this.state.animals)
+    })
+  }
   
   render() {
     return (
       <div className="App">
         <h1>DATA</h1>
-        <Frontend users={this.state.users} displayUsers={this.displayUsers} />
+        <Frontend users={this.state.users} animals={this.state.animals} displayUsers={this.displayUsers} displayAnimals={this.displayAnimals}
+        addAnimal={this.addAnimal} />
       </div>
     )
   }
