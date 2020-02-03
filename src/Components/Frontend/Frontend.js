@@ -1,5 +1,6 @@
 import React from 'react';
 import './Frontend.css';
+import Backend from '../../util/Backend';
 
 class Frontend extends React.Component {
     constructor(props) {
@@ -7,28 +8,44 @@ class Frontend extends React.Component {
         this.state = {
             displayUsers: false,
             displayAnimals: false,
-            input: ''
+            displayAddUser: false,
+            animalInput: '',
+            userInput: ''
         }
 
         this.displayUsers = this.displayUsers.bind(this);
         this.toggleUsersButton = this.toggleUsersButton.bind(this);
         this.displayAnimals = this.displayAnimals.bind(this);
         this.toggleAnimalsButton = this.toggleAnimalsButton.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-        this.click = this.click.bind(this)
+        this.handleAnimalInputChange = this.handleAnimalInputChange.bind(this);
+        this.addAnimal = this.addAnimal.bind(this);
+        this.addUser = this.addUser.bind(this);
+        this.handleUserInputChange = this.handleUserInputChange.bind(this);
+        this.displayAddUser = this.displayAddUser.bind(this);
+        this.toggleAddUserButton = this.toggleAddUserButton.bind(this)
     }
-
 
     toggleUsersButton() {
         if (this.state.displayUsers === false) {
+            this.props.displayUsers()
             this.setState({displayUsers: true})
         } else if (this.state.displayUsers === true) {
             this.setState({displayUsers: false})
         }
     }
 
+    toggleAddUserButton() {
+        if (this.state.displayAddUser === false) {
+            this.props.displayUsers()
+            this.setState({displayAddUser: true})
+        } else if (this.state.displayAddUser === true) {
+            this.setState({displayAddUser: false})
+        }
+    }
+
     toggleAnimalsButton() {
         if (this.state.displayAnimals === false) {
+            this.props.displayAnimals()
             this.setState({displayAnimals: true})
         } else if (this.state.displayAnimals === true) {
             this.setState({displayAnimals: false})
@@ -36,10 +53,8 @@ class Frontend extends React.Component {
         
     }
 
-    
     displayUsers() {
         if (this.state.displayUsers) {
-            this.props.displayUsers()
             return ( 
                 <div>
                     <br />
@@ -50,33 +65,46 @@ class Frontend extends React.Component {
         }
     }
 
-    displayAnimals() {
-        if (this.state.displayAnimals) {
-            this.props.displayAnimals()
-            
-            return ( 
+    displayAddUser() {
+        if (this.state.displayAddUser) {
+            return (
                 <div>
-                    <br />
-                    {this.props.animals.map(animal =>
-                    <div>{animal}</div>)}
+                <form>
+                    <h1>Add new user</h1>
+                    <input className="input" value={this.state.userInput} onChange={(e) => {this.handleUserInputChange(e)}}></input>
+                    <button onClick={this.addUser} type='primary'>Add user</button>
+                </form>
                 </div>
             )
         }
     }
 
+    displayAnimals() {
+        if (this.state.displayAnimals) {
+            return ( 
+                <div>
+                    <br />
+                    {this.props.animals.map(animal =>
+                    <div>{animal.animal}</div>)}
+                </div>
+            )
+        }
+    }
 
-    handleChange(event) {
-        this.setState({input: event.target.value});
+    handleAnimalInputChange(event) {
+        this.setState({animalInput: event.target.value});
       }
 
-    click() {
-        //console.log(this.state.input)
-        const inputValue = this.state.input
-        //console.log(inputValue)
-        return fetch('/animals', {method: 'POST', body: JSON.stringify({input: inputValue}), headers: {
-            'Content-Type': 'application/json',
-          }, })
-        .then(response => response.json())
+    handleUserInputChange(event) {
+        this.setState({userInput: event.target.value});
+      }
+
+    addAnimal() {
+        Backend.addAnimal(this.state.animalInput)
+    }
+
+    addUser() {
+        Backend.addUser(this.state.userInput, this.props.users)
     }
 
     render() {
@@ -86,10 +114,12 @@ class Frontend extends React.Component {
                 {this.displayUsers()}
                 <button onClick={this.toggleAnimalsButton}>Display animals</button>
                 {this.displayAnimals()}
+                <button onClick={this.toggleAddUserButton}>Add user</button>
+                {this.displayAddUser()}
                 <form>
                     <h1>Add new animal</h1>
-                    <input className="input" value={this.state.input} onChange={(e) => {this.handleChange(e)}}></input>
-                    <button onClick={this.click} type='primary'>Add animal</button>
+                    <input className="input" value={this.state.animalInput} onChange={(e) => {this.handleAnimalInputChange(e)}}></input>
+                    <button onClick={this.addAnimal} type='primary'>Add animal</button>
                 </form>
             </div>
         )
