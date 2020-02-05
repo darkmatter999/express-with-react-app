@@ -28,7 +28,15 @@ const Backend = {
             'Content-Type': 'application/json',
           }, })
         .then(response => response.json())
-    }
+    },
+
+    deleteUser(input) {
+        return fetch('/users', {method: 'DELETE', body: JSON.stringify({input: {username: input}}), 
+        headers: {
+            'Content-Type': 'application/json',
+          }, })
+        .then(response => response.json())
+    },
 }   
 
 export default Backend;

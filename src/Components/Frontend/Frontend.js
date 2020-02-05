@@ -9,6 +9,8 @@ class Frontend extends React.Component {
             displayUsers: false,
             displayAnimals: false,
             displayAddUser: false,
+            displayDeleteUser: false,
+            deleteInput: '',
             animalInput: '',
             userInput: ''
         }
@@ -22,7 +24,11 @@ class Frontend extends React.Component {
         this.addUser = this.addUser.bind(this);
         this.handleUserInputChange = this.handleUserInputChange.bind(this);
         this.displayAddUser = this.displayAddUser.bind(this);
-        this.toggleAddUserButton = this.toggleAddUserButton.bind(this)
+        this.toggleAddUserButton = this.toggleAddUserButton.bind(this);
+        this.toggleDeleteUserButton = this.toggleDeleteUserButton.bind(this);
+        this.deleteUser = this.deleteUser.bind(this);
+        this.handleDeleteUserChange = this.handleDeleteUserChange.bind(this);
+        this.displayDeleteUser = this.displayDeleteUser.bind(this)
     }
 
     toggleUsersButton() {
@@ -42,6 +48,17 @@ class Frontend extends React.Component {
             this.setState({displayAddUser: false})
         }
     }
+
+    
+    toggleDeleteUserButton() {
+        if (this.state.displayDeleteUser === false) {
+            this.props.displayUsers()
+            this.setState({displayDeleteUser: true})
+        } else if (this.state.displayDeleteUser === true) {
+            this.setState({displayDeleteUser: false})
+        }
+    }
+
 
     toggleAnimalsButton() {
         if (this.state.displayAnimals === false) {
@@ -79,6 +96,20 @@ class Frontend extends React.Component {
         }
     }
 
+    displayDeleteUser() {
+        if (this.state.displayDeleteUser) {
+            return (
+                <div>
+                <form>
+                    <h1>Delete user</h1>
+                    <input className="input" value={this.state.deleteInput} onChange={(e) => {this.handleDeleteUserChange(e)}}></input>
+                    <button onClick={this.deleteUser} type='primary'>Delete user</button>
+                </form>
+                </div>
+            )
+        }
+    }
+
     displayAnimals() {
         if (this.state.displayAnimals) {
             return ( 
@@ -99,12 +130,20 @@ class Frontend extends React.Component {
         this.setState({userInput: event.target.value});
       }
 
+    handleDeleteUserChange(event) {
+        this.setState({deleteInput: event.target.value});
+      }
+
     addAnimal() {
         Backend.addAnimal(this.state.animalInput)
     }
 
     addUser() {
         Backend.addUser(this.state.userInput, this.props.users)
+    }
+
+    deleteUser() {
+        Backend.deleteUser(this.state.deleteInput)
     }
 
     render() {
@@ -116,6 +155,8 @@ class Frontend extends React.Component {
                 {this.displayAnimals()}
                 <button onClick={this.toggleAddUserButton}>Add user</button>
                 {this.displayAddUser()}
+                <button onClick={this.toggleDeleteUserButton}>Delete user</button>
+                {this.displayDeleteUser()}
                 <form>
                     <h1>Add new animal</h1>
                     <input className="input" value={this.state.animalInput} onChange={(e) => {this.handleAnimalInputChange(e)}}></input>
