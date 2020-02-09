@@ -10,12 +10,11 @@ class Frontend extends React.Component {
             displayAnimals: false,
             displayAddUser: false,
             displayDeleteUser: false,
-            deleteInput: '',
+            deleteInputManually: '',
             animalInput: '',
             userInput: ''
         }
 
-        this.displayUsers = this.displayUsers.bind(this);
         this.toggleUsersButton = this.toggleUsersButton.bind(this);
         this.displayAnimals = this.displayAnimals.bind(this);
         this.toggleAnimalsButton = this.toggleAnimalsButton.bind(this);
@@ -26,15 +25,15 @@ class Frontend extends React.Component {
         this.displayAddUser = this.displayAddUser.bind(this);
         this.toggleAddUserButton = this.toggleAddUserButton.bind(this);
         this.toggleDeleteUserButton = this.toggleDeleteUserButton.bind(this);
-        this.deleteUser = this.deleteUser.bind(this);
+        this.deleteUserManually = this.deleteUserManually.bind(this);
         this.handleDeleteUserChange = this.handleDeleteUserChange.bind(this);
-        this.displayDeleteUser = this.displayDeleteUser.bind(this)
+        this.displayDeleteUser = this.displayDeleteUser.bind(this);
     }
 
     toggleUsersButton() {
         if (this.state.displayUsers === false) {
             this.props.displayUsers()
-            this.setState({displayUsers: true})
+            this.setState({displayUsers: true}) 
         } else if (this.state.displayUsers === true) {
             this.setState({displayUsers: false})
         }
@@ -49,7 +48,6 @@ class Frontend extends React.Component {
         }
     }
 
-    
     toggleDeleteUserButton() {
         if (this.state.displayDeleteUser === false) {
             this.props.displayUsers()
@@ -59,7 +57,6 @@ class Frontend extends React.Component {
         }
     }
 
-
     toggleAnimalsButton() {
         if (this.state.displayAnimals === false) {
             this.props.displayAnimals()
@@ -68,18 +65,6 @@ class Frontend extends React.Component {
             this.setState({displayAnimals: false})
         }
         
-    }
-
-    displayUsers() {
-        if (this.state.displayUsers) {
-            return ( 
-                <div>
-                    <br />
-                    {this.props.users.map(user =>
-                    <div key={user.id}>{user.username}</div>)}
-                </div>
-            )
-        }
     }
 
     displayAddUser() {
@@ -102,8 +87,8 @@ class Frontend extends React.Component {
                 <div>
                 <form>
                     <h1>Delete user</h1>
-                    <input className="input" value={this.state.deleteInput} onChange={(e) => {this.handleDeleteUserChange(e)}}></input>
-                    <button onClick={this.deleteUser} type='primary'>Delete user</button>
+                    <input className="input" value={this.state.deleteInputManually} onChange={(e) => {this.handleDeleteUserChange(e)}}></input>
+                    <button onClick={this.deleteUserManually} type='primary'>Delete user</button>
                 </form>
                 </div>
             )
@@ -131,7 +116,7 @@ class Frontend extends React.Component {
       }
 
     handleDeleteUserChange(event) {
-        this.setState({deleteInput: event.target.value});
+        this.setState({deleteInputManually: event.target.value});
       }
 
     addAnimal() {
@@ -142,15 +127,37 @@ class Frontend extends React.Component {
         Backend.addUser(this.state.userInput, this.props.users)
     }
 
-    deleteUser() {
-        Backend.deleteUser(this.state.deleteInput)
+    deleteUserManually() {
+        Backend.deleteUserManually(this.state.deleteInputManually)
     }
 
+    deleteUserFromList(user) {
+        let del; 
+        del = this.props.users.filter(i => i === user)[0].username
+        Backend.deleteUserFromList(del);
+        this.props.displayUsers();
+    }
+    
     render() {
+        // !!!The function that is activated when clicked needs to be 'bound' to 'this' and the function parameter ('user')!!!
+        const userArr = this.props.users.map(user => {
+            return (
+                <div 
+                    key={user.id}> 
+                    {user.username} &nbsp;&nbsp;
+                    <button 
+                        onClick=
+                        {this.deleteUserFromList.bind(this, user)}>DELETE
+                    </button>
+                </div>
+            )
+        })
+
+
         return (
             <div>
                 <button onClick={this.toggleUsersButton}>Display users</button>
-                {this.displayUsers()}
+                {this.state.displayUsers ? userArr : ''}
                 <button onClick={this.toggleAnimalsButton}>Display animals</button>
                 {this.displayAnimals()}
                 <button onClick={this.toggleAddUserButton}>Add user</button>

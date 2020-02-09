@@ -23,19 +23,28 @@ const Backend = {
     },
 
     addUser(input, array) {
-        return fetch('/users', {method: 'POST', body: JSON.stringify({input: {id: array.length + 1, username: input}}), 
+        return fetch('/users', {method: 'POST', body: JSON.stringify({input: {id: array.length > 0 ? array[array.length -1].id + 1 : 1, username: input}}), 
         headers: {
             'Content-Type': 'application/json',
           }, })
         .then(response => response.json())
     },
 
-    deleteUser(input) {
+    deleteUserManually(input) {
         return fetch('/users', {method: 'DELETE', body: JSON.stringify({input: {username: input}}), 
         headers: {
             'Content-Type': 'application/json',
           }, })
         .then(response => response.json())
+    },
+
+    deleteUserFromList(input) {
+        return fetch('/users', {method: 'DELETE', body: JSON.stringify({input: {username: input}}), 
+        headers: {
+            'Content-Type': 'application/json',
+          }, })
+        .then(response => response.json())
+        .then(console.log(input))
     },
 }   
 
