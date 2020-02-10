@@ -10,7 +10,9 @@ class Frontend extends React.Component {
             displayAnimals: false,
             displayAddUser: false,
             displayDeleteUser: false,
+            displayUpdateUser: false,
             deleteInputManually: '',
+            updateInputManually: '',
             animalInput: '',
             userInput: ''
         }
@@ -28,6 +30,9 @@ class Frontend extends React.Component {
         this.deleteUserManually = this.deleteUserManually.bind(this);
         this.handleDeleteUserChange = this.handleDeleteUserChange.bind(this);
         this.displayDeleteUser = this.displayDeleteUser.bind(this);
+        this.toggleUpdateUserButton = this.toggleUpdateUserButton.bind(this);
+        this.updateUserManually = this.updateUserManually.bind(this);
+        this.handleUpdateUserChange = this.handleUpdateUserChange.bind(this);
     }
 
     toggleUsersButton() {
@@ -45,6 +50,15 @@ class Frontend extends React.Component {
             this.setState({displayAddUser: true})
         } else if (this.state.displayAddUser === true) {
             this.setState({displayAddUser: false})
+        }
+    }
+
+    toggleUpdateUserButton() {
+        if (this.state.displayUpdateUser === false) {
+            this.props.displayUsers()
+            this.setState({displayUpdateUser: true})
+        } else if (this.state.displayUpdateUser === true) {
+            this.setState({displayUpdateUser: false})
         }
     }
 
@@ -75,6 +89,20 @@ class Frontend extends React.Component {
                     <h1>Add new user</h1>
                     <input className="input" value={this.state.userInput} onChange={(e) => {this.handleUserInputChange(e)}}></input>
                     <button onClick={this.addUser} type='primary'>Add user</button>
+                </form>
+                </div>
+            )
+        }
+    }
+
+    displayUpdateUser() {
+        if (this.state.displayUpdateUser) {
+            return (
+                <div>
+                <form>
+                    <h1>Update user</h1>
+                    <input className="input" value={this.state.updateInputManually} onChange={(e) => {this.handleUpdateUserChange(e)}}></input>
+                    <button onClick={this.updateUserManually} type='primary'>Update user</button>
                 </form>
                 </div>
             )
@@ -115,6 +143,10 @@ class Frontend extends React.Component {
         this.setState({userInput: event.target.value});
       }
 
+    handleUpdateUserChange(event) {
+        this.setState({updateInputManually: event.target.value});
+      }
+
     handleDeleteUserChange(event) {
         this.setState({deleteInputManually: event.target.value});
       }
@@ -125,6 +157,10 @@ class Frontend extends React.Component {
 
     addUser() {
         Backend.addUser(this.state.userInput, this.props.users)
+    }
+
+    updateUserManually() {
+        Backend.updateUserManually(this.state.updateInputManually)
     }
 
     deleteUserManually() {
@@ -164,6 +200,8 @@ class Frontend extends React.Component {
                 {this.displayAddUser()}
                 <button onClick={this.toggleDeleteUserButton}>Delete user</button>
                 {this.displayDeleteUser()}
+                <button onClick={this.toggleUpdateUserButton}>Update user</button>
+                {this.displayUpdateUser()}
                 <form>
                     <h1>Add new animal</h1>
                     <input className="input" value={this.state.animalInput} onChange={(e) => {this.handleAnimalInputChange(e)}}></input>

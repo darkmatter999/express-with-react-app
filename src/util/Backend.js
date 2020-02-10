@@ -30,6 +30,14 @@ const Backend = {
         .then(response => response.json())
     },
 
+    updateUserManually(input) {
+        return fetch('/users', {method: 'PUT', body: JSON.stringify({input: {username: input}}), 
+        headers: {
+            'Content-Type': 'application/json',
+          }, })
+        .then(response => response.json())
+    },
+
     deleteUserManually(input) {
         return fetch('/users', {method: 'DELETE', body: JSON.stringify({input: {username: input}}), 
         headers: {
